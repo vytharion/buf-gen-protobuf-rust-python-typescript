@@ -1,0 +1,10 @@
+# Everything inside this tree is overwritten by `buf generate`.
+# Only the hand-written __init__.py files (one per namespace level) and
+# this .gitignore are checked into version control.
+*
+!.gitignore
+!__init__.py
+!monorepo
+!monorepo/__init__.py
+!monorepo/v1
+!monorepo/v1/__init__.py
