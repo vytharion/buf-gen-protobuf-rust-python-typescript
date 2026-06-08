@@ -1,0 +1,10 @@
+# Everything inside this tree is overwritten by `buf generate`.
+# Only the hand-written index.ts files (one per namespace level) and
+# this .gitignore are checked into version control.
+*
+!.gitignore
+!index.ts
+!monorepo
+!monorepo/index.ts
+!monorepo/v1
+!monorepo/v1/index.ts

@@ -1,6 +1,7 @@
 .PHONY: help install-buf check-buf lint breaking generate test \
 	rust-check rust-test rust-clippy \
-	python-install python-check python-lint python-test
+	python-install python-check python-lint python-test \
+	ts-install ts-check ts-lint ts-test
 
 help:
 	@echo "Targets:"
@@ -16,6 +17,10 @@ help:
 	@echo "  python-check    - smoke-import the monorepo_pb Python package"
 	@echo "  python-lint     - ruff check the python subproject"
 	@echo "  python-test     - pytest inside the python subproject"
+	@echo "  ts-install      - bun install inside the typescript subproject"
+	@echo "  ts-check        - tsc --noEmit across the typescript subproject"
+	@echo "  ts-lint         - tsc-driven lint pass (no bundler, no eslint dependency)"
+	@echo "  ts-test         - bun test inside the typescript subproject"
 	@echo "  test            - Run pytest against the bootstrap + schema + generator checks"
 
 install-buf:
@@ -53,6 +58,18 @@ python-lint:
 
 python-test:
 	cd python && python -m pytest -q
+
+ts-install:
+	cd typescript && bun install
+
+ts-check:
+	cd typescript && bunx tsc --noEmit -p tsconfig.json
+
+ts-lint:
+	cd typescript && bunx tsc --noEmit -p tsconfig.json
+
+ts-test:
+	cd typescript && bun test
 
 test:
 	pytest -q
