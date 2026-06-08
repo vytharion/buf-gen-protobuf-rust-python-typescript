@@ -1,0 +1,9 @@
+[project]
+name = "buf-monorepo-bootstrap-tests"
+version = "0.1.0"
+description = "Bootstrap-layer tests for the buf-driven Rust/Python/TypeScript monorepo."
+requires-python = ">=3.9"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
