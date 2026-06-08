@@ -1,0 +1,99 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  BUF_VERSION: "1.50.0"
+
+jobs:
+  proto-gates:
+    name: buf lint + buf breaking
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # buf breaking needs the main branch history to diff against.
+          fetch-depth: 0
+
+      - name: Install buf
+        uses: bufbuild/buf-setup-action@v1
+        with:
+          version: ${{ env.BUF_VERSION }}
+
+      - name: buf lint
+        run: buf lint
+
+      - name: buf breaking (against main)
+        if: github.event_name == 'pull_request'
+        run: buf breaking --against ".git#branch=main,subdir=."
+
+  rust-smoke:
+    name: Rust smoke (cargo test)
+    runs-on: ubuntu-latest
+    needs: proto-gates
+    steps:
+      - uses: actions/checkout@v4
+      - uses: bufbuild/buf-setup-action@v1
+        with:
+          version: ${{ env.BUF_VERSION }}
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - name: buf generate
+        run: make generate
+      - name: cargo clippy -D warnings
+        run: make rust-clippy
+      - name: cargo test (cross-language smoke)
+        run: make rust-test
+
+  python-smoke:
+    name: Python smoke (pytest)
+    runs-on: ubuntu-latest
+    needs: proto-gates
+    steps:
+      - uses: actions/checkout@v4
+      - uses: bufbuild/buf-setup-action@v1
+        with:
+          version: ${{ env.BUF_VERSION }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pytest (bootstrap-layer tests)
+        run: pip install pytest
+      - name: buf generate
+        run: make generate
+      - name: pip install monorepo-pb (dev)
+        run: make python-install
+      - name: pytest (bootstrap + schema + generator + smoke)
+        run: make test
+      - name: pytest (python package cross-language smoke)
+        run: make python-test
+
+  typescript-smoke:
+    name: TypeScript smoke (bun test)
+    runs-on: ubuntu-latest
+    needs: proto-gates
+    steps:
+      - uses: actions/checkout@v4
+      - uses: bufbuild/buf-setup-action@v1
+        with:
+          version: ${{ env.BUF_VERSION }}
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.1.34"
+      - name: buf generate
+        run: make generate
+      - name: bun install
+        run: make ts-install
+      - name: tsc --noEmit (strict)
+        run: make ts-check
+      - name: bun test (cross-language smoke)
+        run: make ts-test

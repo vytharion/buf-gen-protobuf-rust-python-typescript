@@ -1,7 +1,8 @@
 .PHONY: help install-buf check-buf lint breaking generate test \
 	rust-check rust-test rust-clippy \
 	python-install python-check python-lint python-test \
-	ts-install ts-check ts-lint ts-test
+	ts-install ts-check ts-lint ts-test \
+	smoke ci
 
 help:
 	@echo "Targets:"
@@ -22,6 +23,8 @@ help:
 	@echo "  ts-lint         - tsc-driven lint pass (no bundler, no eslint dependency)"
 	@echo "  ts-test         - bun test inside the typescript subproject"
 	@echo "  test            - Run pytest against the bootstrap + schema + generator checks"
+	@echo "  smoke           - Run the cross-language smoke harnesses (Rust + Python + TypeScript)"
+	@echo "  ci              - Local reproduction of the GitHub Actions pipeline (lint + breaking + smoke)"
 
 install-buf:
 	./scripts/install-buf.sh
@@ -72,4 +75,9 @@ ts-test:
 	cd typescript && bun test
 
 test:
+	pytest -q
+
+smoke: rust-test python-test ts-test
+
+ci: lint breaking generate smoke
 	pytest -q

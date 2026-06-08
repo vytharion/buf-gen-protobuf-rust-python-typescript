@@ -1,0 +1,13 @@
+{
+  "_comment": "Canonical cross-language smoke vector. Every language smoke harness (Rust, Python, TypeScript) must construct a Money with these exact field values, encode it with its native protobuf runtime, and end up with the byte sequence in `money_wire_bytes_hex`. Decoding those bytes back must reproduce the same field values. Drift in any harness fails CI before the breakage reaches a consumer.",
+  "proto_package": "monorepo.v1",
+  "money": {
+    "currency_code": "USD",
+    "amount_minor_units": 1099
+  },
+  "account": {
+    "id": "acct_2pV5JqEKxQ7HwBZ",
+    "display_name": "Vytharion Treasury"
+  },
+  "money_wire_bytes_hex": "0a0355534410cb08"
+}
