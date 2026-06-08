@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package monorepo.v1;
+
+option go_package = "github.com/vytharion/buf-gen-protobuf-rust-python-typescript/gen/go/monorepo/v1;monorepov1";
+option java_multiple_files = true;
+option java_outer_classname = "MoneyProto";
+option java_package = "com.vytharion.monorepo.v1";
+option csharp_namespace = "Vytharion.Monorepo.V1";
+
+// Money carries a fixed-precision amount so Rust, Python, and TypeScript
+// clients never disagree on rounding. The unit is the smallest indivisible
+// piece of the named currency (cents for USD, satoshi for BTC, etc).
+message Money {
+  string currency_code = 1;
+  int64 amount_minor_units = 2;
+}

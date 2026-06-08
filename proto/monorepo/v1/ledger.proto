@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package monorepo.v1;
+
+import "google/protobuf/timestamp.proto";
+import "monorepo/v1/money.proto";
+
+option go_package = "github.com/vytharion/buf-gen-protobuf-rust-python-typescript/gen/go/monorepo/v1;monorepov1";
+option java_multiple_files = true;
+option java_outer_classname = "LedgerProto";
+option java_package = "com.vytharion.monorepo.v1";
+option csharp_namespace = "Vytharion.Monorepo.V1";
+
+message Account {
+  string id = 1;
+  string display_name = 2;
+  Money balance = 3;
+  google.protobuf.Timestamp created_at = 4;
+}
+
+message TransferRequest {
+  string from_account_id = 1;
+  string to_account_id = 2;
+  Money amount = 3;
+  string idempotency_key = 4;
+}
+
+message TransferResponse {
+  string transfer_id = 1;
+  google.protobuf.Timestamp posted_at = 2;
+}
+
+message GetAccountRequest {
+  string account_id = 1;
+}
+
+message GetAccountResponse {
+  Account account = 1;
+}
+
+service LedgerService {
+  rpc Transfer(TransferRequest) returns (TransferResponse);
+  rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
+}
