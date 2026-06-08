@@ -1,0 +1,26 @@
+version: v1
+managed:
+  enabled: true
+  go_package_prefix:
+    default: github.com/vytharion/buf-gen-protobuf-rust-python-typescript/gen/go
+plugins:
+  - plugin: buf.build/community/neoeinstein-prost
+    out: rust/crates/monorepo-pb/src/gen
+    opt:
+      - bytes=.
+      - compile_well_known_types
+      - file_descriptor_set
+  - plugin: buf.build/community/neoeinstein-tonic
+    out: rust/crates/monorepo-pb/src/gen
+    opt:
+      - compile_well_known_types
+      - no_include
+  - plugin: buf.build/protocolbuffers/python
+    out: python/src/monorepo_pb/gen
+  - plugin: buf.build/grpc/python
+    out: python/src/monorepo_pb/gen
+  - plugin: buf.build/bufbuild/es
+    out: typescript/src/gen
+    opt:
+      - target=ts
+      - import_extension=js
