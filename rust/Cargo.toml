@@ -1,0 +1,20 @@
+[workspace]
+resolver = "2"
+members = ["crates/monorepo-pb"]
+
+[workspace.package]
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/vytharion/buf-gen-protobuf-rust-python-typescript"
+rust-version = "1.75"
+
+[workspace.dependencies]
+prost = "0.13"
+prost-types = "0.13"
+tonic = { version = "0.12", default-features = false, features = ["codegen", "prost", "transport"] }
+bytes = "1.7"
+tokio = { version = "1.40", default-features = false, features = ["macros", "rt-multi-thread"] }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

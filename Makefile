@@ -1,4 +1,4 @@
-.PHONY: help install-buf check-buf lint breaking generate test
+.PHONY: help install-buf check-buf lint breaking generate test rust-check rust-test rust-clippy
 
 help:
 	@echo "Targets:"
@@ -7,6 +7,9 @@ help:
 	@echo "  lint         - Run buf lint over the proto workspace"
 	@echo "  breaking     - Compare current protos against the main branch"
 	@echo "  generate     - Run buf generate using buf.gen.yaml (Rust + Python + TypeScript)"
+	@echo "  rust-check   - cargo check the monorepo-pb crate (requires make generate first)"
+	@echo "  rust-clippy  - cargo clippy with -D warnings on the Rust workspace"
+	@echo "  rust-test    - cargo test the monorepo-pb crate"
 	@echo "  test         - Run pytest against the bootstrap + schema + generator checks"
 
 install-buf:
@@ -23,6 +26,15 @@ breaking:
 
 generate:
 	buf generate
+
+rust-check:
+	cd rust && cargo check --workspace --all-targets
+
+rust-clippy:
+	cd rust && cargo clippy --workspace --all-targets -- -D warnings
+
+rust-test:
+	cd rust && cargo test --workspace
 
 test:
 	pytest -q
